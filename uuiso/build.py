@@ -14,10 +14,19 @@ class IsoMounter(object):
         return False
 
     def mount(self):
-        tempdir = self.tmpmaker()
+        iso_mountpoint = self.tmpmaker()
+        overlay_dir = self.tmpmaker()
+        merged_dir = self.tmpmaker()
         self.executor(
-            ['fuseiso', self.path, tempdir])
-        return tempdir
+            ['fuseiso', self.path, iso_mountpoint])
+        self.executor(
+            [
+                'unionfs-fuse',
+                ':'.join([overlay_dir, iso_mountpoint]),
+                merged_dir
+            ]
+        )
+        return iso_mountpoint
 
 
 def get_args_or_die(args=None):

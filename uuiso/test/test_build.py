@@ -54,7 +54,8 @@ class TestIsoMounter(unittest.TestCase):
 
         self.assertEquals(
             [
-                mock.call(['fuseiso', 'isofile', 'tempdir0'])
+                mock.call(['fuseiso', 'isofile', 'tempdir0']),
+                mock.call(['unionfs-fuse', 'tempdir1:tempdir0', 'tempdir2']),
             ], mounter.executor.mock_calls)
 
     def test_mount_return_value(self):
