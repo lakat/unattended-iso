@@ -24,8 +24,15 @@ def missing(fname):
     return False
 
 
-def tempdir():
-    return 'tempdir'
+def tempdirmaker():
+    counter = []
+
+    def tmpmaker():
+        result = 'tempdir%s' % len(counter)
+        counter.append('l')
+        return result
+
+    return tmpmaker
 
 
 class TestIsoMounter(unittest.TestCase):
@@ -41,17 +48,19 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_mount_succeeds(self):
         mounter = build.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdir)
+            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
 
         mounter.mount()
 
-        mounter.executor.assert_called_once_with(
-            ['fuseiso', 'isofile', 'tempdir'])
+        self.assertEquals(
+            [
+                mock.call(['fuseiso', 'isofile', 'tempdir0'])
+            ], mounter.executor.mock_calls)
 
     def test_mount_return_value(self):
         mounter = build.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdir)
+            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
 
         result = mounter.mount()
 
-        self.assertEquals('tempdir', result)
+        self.assertEquals('tempdir0', result)
