@@ -13,7 +13,7 @@ class IsoMounter(object):
             return True
         return False
 
-    def unpack(self):
+    def mount(self):
         tempdir = self.tmpmaker()
         self.executor(
             ['fuseiso', self.path, tempdir])
