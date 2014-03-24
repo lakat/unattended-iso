@@ -30,28 +30,28 @@ def tempdir():
 
 class TestIsoMounter(unittest.TestCase):
     def test_validate_file_exists(self):
-        unpacker = build.IsoMounter('isofile', file_checker=exists)
+        mounter = build.IsoMounter('isofile', file_checker=exists)
 
-        self.assertTrue(unpacker.validate())
+        self.assertTrue(mounter.validate())
 
     def test_validate_file_missing(self):
-        unpacker = build.IsoMounter('isofile', file_checker=missing)
+        mounter = build.IsoMounter('isofile', file_checker=missing)
 
-        self.assertFalse(unpacker.validate())
+        self.assertFalse(mounter.validate())
 
     def test_mount_succeeds(self):
-        unpacker = build.IsoMounter(
+        mounter = build.IsoMounter(
             'isofile', executor=mock.Mock(), tmpmaker=tempdir)
 
-        unpacker.mount()
+        mounter.mount()
 
-        unpacker.executor.assert_called_once_with(
+        mounter.executor.assert_called_once_with(
             ['fuseiso', 'isofile', 'tempdir'])
 
     def test_mount_return_value(self):
-        unpacker = build.IsoMounter(
+        mounter = build.IsoMounter(
             'isofile', executor=mock.Mock(), tmpmaker=tempdir)
 
-        result = unpacker.mount()
+        result = mounter.mount()
 
         self.assertEquals('tempdir', result)
