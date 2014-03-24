@@ -39,7 +39,7 @@ class TestIsoMounter(unittest.TestCase):
 
         self.assertFalse(unpacker.validate())
 
-    def test_unpack_succeeds(self):
+    def test_mount_succeeds(self):
         unpacker = build.IsoMounter(
             'isofile', executor=mock.Mock(), tmpmaker=tempdir)
 
@@ -48,7 +48,7 @@ class TestIsoMounter(unittest.TestCase):
         unpacker.executor.assert_called_once_with(
             ['fuseiso', 'isofile', 'tempdir'])
 
-    def test_unpack_return_value(self):
+    def test_mount_return_value(self):
         unpacker = build.IsoMounter(
             'isofile', executor=mock.Mock(), tmpmaker=tempdir)
 
