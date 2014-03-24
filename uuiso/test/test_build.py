@@ -58,10 +58,26 @@ class TestIsoMounter(unittest.TestCase):
                 mock.call(['unionfs-fuse', 'tempdir1:tempdir0', 'tempdir2']),
             ], mounter.executor.mock_calls)
 
-    def test_mount_return_value(self):
+    def test_mount_sets_iso_mountpoint(self):
         mounter = build.IsoMounter(
             'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
 
-        result = mounter.mount()
+        mounter.mount()
 
-        self.assertEquals('tempdir0', result)
+        self.assertEquals('tempdir0', mounter.iso_mountpoint)
+
+    def test_mount_sets_overlay_dir(self):
+        mounter = build.IsoMounter(
+            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
+
+        mounter.mount()
+
+        self.assertEquals('tempdir1', mounter.overlay_dir)
+
+    def test_mount_sets_merged_dir(self):
+        mounter = build.IsoMounter(
+            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
+
+        mounter.mount()
+
+        self.assertEquals('tempdir2', mounter.merged_dir)
