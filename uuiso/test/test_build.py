@@ -28,7 +28,7 @@ def tempdir():
     return 'tempdir'
 
 
-class TestUnpacker(unittest.TestCase):
+class TestIsoMounter(unittest.TestCase):
     def test_validate_file_exists(self):
         unpacker = build.IsoMounter('isofile', file_checker=exists)
 
