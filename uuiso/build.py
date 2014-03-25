@@ -35,6 +35,31 @@ class IsoMounter(object):
         )
 
 
+class IsoCreator(object):
+    def __init__(self, source_dir, target_file):
+        self.source_dir = source_dir
+        self.target_file = target_file
+
+    def create(self):
+        self.executor([
+            'mkisofs',
+            '-r',
+            '-V',
+            'Automated Ubuntu Install CD',
+            '-cache-inodes',
+            '-J',
+            '-l',
+            '-b', 'isolinux/isolinux.bin',
+            '-c', 'isolinux/boot.cat',
+            '-no-emul-boot',
+            '-boot-load-size', '4',
+            '-boot-info-table',
+            '-quiet',
+            '-o', self.target_file,
+            self.source_dir,
+            ])
+
+
 def get_args_or_die(args=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('official')

@@ -35,6 +35,35 @@ def tempdirmaker():
     return tmpmaker
 
 
+class IsoCreator(unittest.TestCase):
+    def test_create(self):
+        creator = build.IsoCreator('somedir', 'target.iso')
+        mock_executor = mock.Mock()
+        creator.executor = mock_executor
+
+        creator.create()
+
+        self.assertEquals([
+            mock.call([
+                'mkisofs',
+                '-r',
+                '-V',
+                'Automated Ubuntu Install CD',
+                '-cache-inodes',
+                '-J',
+                '-l',
+                '-b', 'isolinux/isolinux.bin',
+                '-c', 'isolinux/boot.cat',
+                '-no-emul-boot',
+                '-boot-load-size', '4',
+                '-boot-info-table',
+                '-quiet',
+                '-o', 'target.iso',
+                'somedir'
+            ])],
+            mock_executor.mock_calls)
+
+
 class TestIsoMounter(unittest.TestCase):
     def test_validate_file_exists(self):
         mounter = build.IsoMounter('isofile', file_checker=exists,
