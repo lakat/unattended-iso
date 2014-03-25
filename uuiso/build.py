@@ -43,6 +43,19 @@ class IsoMounter(object):
         self.executor(
             ['fusermount', '-u', self.iso_mountpoint])
 
+    def make_file_writable(self, fpath):
+        import os
+        import stat
+        import shutil
+
+        overlay_path = os.path.join(self.overlay_dir, fpath)
+        iso_path = os.path.join(self.iso_mountpoint, fpath)
+
+        os.makedirs(os.path.dirname(overlay_path))
+        shutil.copy(iso_path, overlay_path)
+        os.chmod(overlay_path, os.stat(overlay_path).st_mode | stat.S_IWUSR)
+
+
 
 class IsoCreator(object):
     def __init__(self, source_dir, target_file, executor=None):
@@ -106,14 +119,7 @@ def main():
     mounter.mount()
 
     try:
-        fpath = 'isolinux/isolinux.bin'
-        overlay_path = os.path.join(mounter.overlay_dir, fpath)
-        iso_path = os.path.join(mounter.iso_mountpoint, fpath)
-
-        os.makedirs(os.path.dirname(overlay_path))
-        shutil.copy(iso_path, overlay_path)
-        os.chmod(overlay_path, os.stat(overlay_path).st_mode | stat.S_IWUSR)
-
+        mounter.make_file_writable('isolinux/isolinux.bin')
         iso_maker = IsoCreator(
             mounter.merged_dir, options.automated, executor=subprocess.call)
 
