@@ -37,9 +37,30 @@ def tempdirmaker():
 
 class TestIsoMounter(unittest.TestCase):
     def test_validate_file_exists(self):
-        mounter = build.IsoMounter('isofile', file_checker=exists)
+        mounter = build.IsoMounter('isofile', file_checker=exists,
+                                   binary_checker=exists)
 
         self.assertTrue(mounter.validate())
+
+    def test_validate_binary_missing(self):
+        mounter = build.IsoMounter('isofile', file_checker=exists,
+                                   binary_checker=missing)
+
+        self.assertFalse(mounter.validate())
+
+    def test_validate_checks_for_all_binaries(self):
+        mock_checker = mock.Mock()
+        mock_checker.return_value = True
+        mounter = build.IsoMounter('isofile', file_checker=exists,
+                                   binary_checker=mock_checker)
+
+        mounter.validate()
+
+        self.assertEquals(
+            [
+                mock.call('fuseiso'),
+                mock.call('unionfs-fuse'),
+            ], mock_checker.mock_calls)
 
     def test_validate_file_missing(self):
         mounter = build.IsoMounter('isofile', file_checker=missing)
