@@ -29,16 +29,26 @@ class IsoMounter(object):
         self.executor(
             [
                 'unionfs-fuse',
-                ':'.join([self.overlay_dir, self.iso_mountpoint]),
+                '-o',
+                'cow',
+                ':'.join(
+                    [self.overlay_dir + '=RW', self.iso_mountpoint + '=RO']),
                 self.merged_dir
             ]
         )
 
+    def umount(self):
+        self.executor(
+            ['fusermount', '-u', self.merged_dir])
+        self.executor(
+            ['fusermount', '-u', self.iso_mountpoint])
+
 
 class IsoCreator(object):
-    def __init__(self, source_dir, target_file):
+    def __init__(self, source_dir, target_file, executor=None):
         self.source_dir = source_dir
         self.target_file = target_file
+        self.executor = executor
 
     def create(self):
         self.executor([
@@ -60,6 +70,17 @@ class IsoCreator(object):
             ])
 
 
+class TmpMaker(object):
+    def __init__(self, mkdtemp):
+        self.mkdtemp = mkdtemp
+        self.created_directories = []
+
+    def __call__(self):
+        tmp_dir = self.mkdtemp()
+        self.created_directories.append(tmp_dir)
+        return tmp_dir
+
+
 def get_args_or_die(args=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('official')
@@ -69,4 +90,33 @@ def get_args_or_die(args=None):
 
 
 def main():
-    pass
+    import os
+    import subprocess
+    import tempfile
+    import stat
+    import shutil
+
+    options = get_args_or_die()
+
+    tmp_maker = TmpMaker(tempfile.mkdtemp)
+
+    mounter = IsoMounter(
+        options.official, os.path.exists, subprocess.call, tmp_maker)
+
+    mounter.mount()
+
+    try:
+        fpath = 'isolinux/isolinux.bin'
+        overlay_path = os.path.join(mounter.overlay_dir, fpath)
+        iso_path = os.path.join(mounter.iso_mountpoint, fpath)
+
+        os.makedirs(os.path.dirname(overlay_path))
+        shutil.copy(iso_path, overlay_path)
+        os.chmod(overlay_path, os.stat(overlay_path).st_mode | stat.S_IWUSR)
+
+        iso_maker = IsoCreator(
+            mounter.merged_dir, options.automated, executor=subprocess.call)
+
+        iso_maker.create()
+    finally:
+        mounter.umount()

@@ -105,7 +105,9 @@ class TestIsoMounter(unittest.TestCase):
         self.assertEquals(
             [
                 mock.call(['fuseiso', 'isofile', 'tempdir0']),
-                mock.call(['unionfs-fuse', 'tempdir1:tempdir0', 'tempdir2']),
+                mock.call([
+                    'unionfs-fuse', '-o', 'cow',
+                    'tempdir1=RW:tempdir0=RO', 'tempdir2']),
             ], mounter.executor.mock_calls)
 
     def test_mount_sets_iso_mountpoint(self):
@@ -131,3 +133,29 @@ class TestIsoMounter(unittest.TestCase):
         mounter.mount()
 
         self.assertEquals('tempdir2', mounter.merged_dir)
+
+    def test_umount(self):
+        mounter = build.IsoMounter(
+            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
+        mounter.mount()
+        mounter.executor = mock.Mock()
+
+        mounter.umount()
+
+        self.assertEquals(
+            [
+                mock.call(['fusermount', '-u', 'tempdir2']),
+                mock.call(['fusermount', '-u', 'tempdir0']),
+            ], mounter.executor.mock_calls)
+
+
+class TestTmpMaker(unittest.TestCase):
+    def test_tmp_maker_registers_created_directories(self):
+        fake_mkdtemp = mock.Mock()
+        fake_mkdtemp.return_value = 'tmpdir'
+
+        tmp_maker = build.TmpMaker(fake_mkdtemp)
+
+        tmp_maker()
+
+        self.assertEquals(['tmpdir'], tmp_maker.created_directories)
