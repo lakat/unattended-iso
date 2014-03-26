@@ -102,6 +102,7 @@ def get_args_or_die(args=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('official')
     parser.add_argument('automated')
+    parser.add_argument('--after-install')
 
     return parser.parse_args(args=args)
 
@@ -614,17 +615,17 @@ d-i debian-installer/exit/poweroff boolean true
 # packages and run commands in the target system.
 #d-i preseed/late_command string apt-install zsh; in-target chsh -s /bin/zsh
 d-i preseed/late_command string \
-    cp /cdrom/late_command.sh /target/root/; \
-    chroot /target bash /root/late_command.sh > /target/root/late_command.log 2>&1
+    cp /cdrom/after_install.sh /target/root/; \
+    in-target bash /root/after_install.sh > /target/root/after_install.log 2>&1
 """)
 
-LATE_COMMAND = textwrap.dedent(r"""
+DEFAULT_AFTER_INSTALL_SCRIPT = textwrap.dedent(r"""
 #!/bin/bash
 cat >> /etc/network/interfaces << EOF
 auto eth0
 iface eth0 inet dhcp
 EOF
-touch /root/late_command.done
+touch /root/after_install.done
 """)
 
 
@@ -662,8 +663,14 @@ def main():
         with open(isolinux_cfg, 'wb') as bootcfg:
             bootcfg.write(bootconfig.replace("timeout 0", "timeout 1"))
 
-        with open(os.path.join(mounter.overlay_dir, 'late_command.sh'), 'wb') as late_command:
-            late_command.write(LATE_COMMAND)
+        if options.after_install:
+            with open(options.after_install, 'rb') as after_install_file:
+                after_install_script_contents = after_install_file.read()
+        else:
+            after_install_script_contents = DEFAULT_AFTER_INSTALL_SCRIPT
+
+        with open(os.path.join(mounter.overlay_dir, 'after_install.sh'), 'wb') as after_install:
+            after_install.write(after_install_script_contents)
 
         iso_maker = IsoCreator(
             mounter.merged_dir, options.automated, executor=subprocess.call)
