@@ -15,6 +15,16 @@ class TestGetParamsOrDie(unittest.TestCase):
         self.assertEquals('official', options.official)
         self.assertEquals('automated', options.automated)
 
+    def test_after_install_parameter_missing(self):
+        options = build.get_args_or_die(['a', 'b'])
+
+        self.assertEquals(None, options.after_install)
+
+    def test_after_install_parameter_specified(self):
+        options = build.get_args_or_die(['a', 'b', '--after-install=somefile'])
+
+        self.assertEquals('somefile', options.after_install)
+
 
 def exists(fname):
     return True
