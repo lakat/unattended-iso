@@ -613,6 +613,18 @@ d-i debian-installer/exit/poweroff boolean true
 # directly, or use the apt-install and in-target commands to easily install
 # packages and run commands in the target system.
 #d-i preseed/late_command string apt-install zsh; in-target chsh -s /bin/zsh
+d-i preseed/late_command string \
+    cp /cdrom/late_command.sh /target/root/; \
+    chroot /target bash /root/late_command.sh > /target/root/late_command.log 2>&1
+""")
+
+LATE_COMMAND = textwrap.dedent(r"""
+#!/bin/bash
+cat >> /etc/network/interfaces << EOF
+auto eth0
+iface eth0 inet dhcp
+EOF
+touch /root/late_command.done
 """)
 
 
@@ -649,6 +661,9 @@ def main():
 
         with open(isolinux_cfg, 'wb') as bootcfg:
             bootcfg.write(bootconfig.replace("timeout 0", "timeout 1"))
+
+        with open(os.path.join(mounter.overlay_dir, 'late_command.sh'), 'wb') as late_command:
+            late_command.write(LATE_COMMAND)
 
         iso_maker = IsoCreator(
             mounter.merged_dir, options.automated, executor=subprocess.call)
