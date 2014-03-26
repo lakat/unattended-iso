@@ -10,7 +10,7 @@ qemu-img create hda 4G
 # Run the installation
 time kvm -enable-kvm -m 4192 -cdrom ubuntu-13.10-server-unattended-amd64.iso -vnc :1 -boot d hda
 # Start the VM
-kvm -enable-kvm -m 4192 -vnc :1 -boot d hda
+kvm -enable-kvm -m 4192 -vnc :1 -boot d hda -net user,hostfwd=tcp::2424-:22 -net nic
 ```
 
 # Developers
