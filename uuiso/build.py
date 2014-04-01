@@ -649,11 +649,9 @@ def main():
 
         with open(txt_cfg, 'wb') as txt:
             txt.write(ISOLINUX_MENU)
-            txt.close()
 
         with open(os.path.join(mounter.overlay_dir, 'autoinst.seed'), 'wb') as seed:
             seed.write(UBUNTU_SEED)
-            seed.close()
 
         isolinux_cfg = mounter.make_file_writable('isolinux/isolinux.cfg')
 
