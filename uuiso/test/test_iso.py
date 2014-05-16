@@ -2,6 +2,7 @@ import unittest
 import mock
 
 from uuiso import iso
+from uuiso import tempdir_maker
 
 
 class IsoCreator(unittest.TestCase):
@@ -31,17 +32,6 @@ class IsoCreator(unittest.TestCase):
                 'somedir'
             ])],
             mock_executor.mock_calls)
-
-
-def tempdirmaker():
-    counter = []
-
-    def tmpmaker():
-        result = 'tempdir%s' % len(counter)
-        counter.append('l')
-        return result
-
-    return tmpmaker
 
 
 def exists(fname):
@@ -86,7 +76,7 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_mount_succeeds(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
+            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
 
         mounter.mount()
 
@@ -100,7 +90,7 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_mount_sets_iso_mountpoint(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
+            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
 
         mounter.mount()
 
@@ -108,7 +98,7 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_mount_sets_overlay_dir(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
+            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
 
         mounter.mount()
 
@@ -116,7 +106,7 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_mount_sets_merged_dir(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
+            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
 
         mounter.mount()
 
@@ -124,7 +114,7 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_umount(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdirmaker())
+            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
         mounter.mount()
         mounter.executor = mock.Mock()
 

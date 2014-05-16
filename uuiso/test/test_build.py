@@ -26,13 +26,3 @@ class TestGetParamsOrDie(unittest.TestCase):
         self.assertEquals('somefile', options.after_install)
 
 
-class TestTmpMaker(unittest.TestCase):
-    def test_tmp_maker_registers_created_directories(self):
-        fake_mkdtemp = mock.Mock()
-        fake_mkdtemp.return_value = 'tmpdir'
-
-        tmp_maker = build.TmpMaker(fake_mkdtemp)
-
-        tmp_maker()
-
-        self.assertEquals(['tmpdir'], tmp_maker.created_directories)

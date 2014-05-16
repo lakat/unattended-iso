@@ -2,17 +2,7 @@ import argparse
 import textwrap
 
 from uuiso import iso
-
-
-class TmpMaker(object):
-    def __init__(self, mkdtemp):
-        self.mkdtemp = mkdtemp
-        self.created_directories = []
-
-    def __call__(self):
-        tmp_dir = self.mkdtemp()
-        self.created_directories.append(tmp_dir)
-        return tmp_dir
+from uuiso import tempdir_maker
 
 
 def get_args_or_die(args=None):
@@ -553,7 +543,7 @@ def main():
 
     options = get_args_or_die()
 
-    tmp_maker = TmpMaker(tempfile.mkdtemp)
+    tmp_maker = tempdir_maker.TmpMaker(tempfile.mkdtemp)
 
     mounter = iso.IsoMounter(
         options.official, os.path.exists, subprocess.call, tmp_maker)
