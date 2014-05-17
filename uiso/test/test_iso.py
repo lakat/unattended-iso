@@ -43,27 +43,29 @@ def missing(fname):
 
 
 def make_mounter(file_checker=exists, binary_checker=exists):
-    return iso.IsoMounter(
-        'isofile', file_checker=file_checker, binary_checker=binary_checker)
+    executor=mock.Mock()
+    tmpmaker=tempdir_maker.tempdirmaker()
 
+    return iso.IsoMounter(
+        'isofile', file_checker=file_checker, binary_checker=binary_checker,
+        executor=executor, tmpmaker=tmpmaker)
 
 
 class TestIsoMounter(unittest.TestCase):
     def test_validate_file_exists(self):
-        mounter = make_mounter(file_checker=exists, binary_checker=exists)
+        mounter = make_mounter(binary_checker=exists)
 
         self.assertTrue(mounter.validate())
 
     def test_validate_binary_missing(self):
-        mounter = make_mounter(file_checker=exists, binary_checker=missing)
+        mounter = make_mounter(binary_checker=missing)
 
         self.assertFalse(mounter.validate())
 
     def test_validate_checks_for_all_binaries(self):
         mock_checker = mock.Mock()
         mock_checker.return_value = True
-        mounter = iso.IsoMounter('isofile', file_checker=exists,
-                                 binary_checker=mock_checker)
+        mounter = make_mounter(binary_checker=mock_checker)
 
         mounter.validate()
 
@@ -74,15 +76,12 @@ class TestIsoMounter(unittest.TestCase):
             ], mock_checker.mock_calls)
 
     def test_validate_file_missing(self):
-        mounter = iso.IsoMounter('isofile', file_checker=missing)
+        mounter = make_mounter(file_checker=missing)
 
         self.assertFalse(mounter.validate())
 
     def test_mount_succeeds(self):
-        mounter = iso.IsoMounter(
-            'isofile',
-            executor=mock.Mock(),
-            tmpmaker=tempdir_maker.tempdirmaker())
+        mounter = make_mounter()
 
         mounter.mount()
 
@@ -95,40 +94,28 @@ class TestIsoMounter(unittest.TestCase):
             ], mounter.executor.mock_calls)
 
     def test_mount_sets_iso_mountpoint(self):
-        mounter = iso.IsoMounter(
-            'isofile',
-            executor=mock.Mock(),
-            tmpmaker=tempdir_maker.tempdirmaker())
+        mounter = make_mounter()
 
         mounter.mount()
 
         self.assertEquals('tempdir0', mounter.iso_mountpoint)
 
     def test_mount_sets_overlay_dir(self):
-        mounter = iso.IsoMounter(
-            'isofile',
-            executor=mock.Mock(),
-            tmpmaker=tempdir_maker.tempdirmaker())
+        mounter = make_mounter()
 
         mounter.mount()
 
         self.assertEquals('tempdir1', mounter.overlay_dir)
 
     def test_mount_sets_merged_dir(self):
-        mounter = iso.IsoMounter(
-            'isofile',
-            executor=mock.Mock(),
-            tmpmaker=tempdir_maker.tempdirmaker())
+        mounter = make_mounter()
 
         mounter.mount()
 
         self.assertEquals('tempdir2', mounter.merged_dir)
 
     def test_umount(self):
-        mounter = iso.IsoMounter(
-            'isofile',
-            executor=mock.Mock(),
-            tmpmaker=tempdir_maker.tempdirmaker())
+        mounter = make_mounter()
         mounter.mount()
         mounter.executor = mock.Mock()
 
