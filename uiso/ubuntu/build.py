@@ -21,6 +21,11 @@ def contents_of(fname):
         return data_file.read()
 
 
+def binary_checker(fname):
+    import distutils
+    return bool(distutils.spawn.find_executable(fname))
+
+
 def main():
     import os
     import subprocess
@@ -31,7 +36,11 @@ def main():
     tmp_maker = tempdir_maker.TmpMaker(tempfile.mkdtemp)
 
     mounter = iso.IsoMounter(
-        options.official, os.path.exists, subprocess.call, tmp_maker)
+        options.official,
+        file_checker=os.path.exists,
+        executor=subprocess.call,
+        tmpmaker=tmp_maker,
+        binary_checker=binary_checker)
 
     mounter.validate()
 
