@@ -15,29 +15,6 @@ def get_args_or_die(args=None):
     return parser.parse_args(args=args)
 
 
-ISOLINUX_MENU = textwrap.dedent("""
-default autoinst
-label autoinst
-  menu label ^Automatic Installation
-  kernel /install/vmlinuz
-  append  file=/cdrom/autoinst.seed vga=normal console=tty0 locale=en_GB keyboard-configuration/layoutcode=gb initrd=/install/initrd.gz nosplash text nomodeset --
-label install
-  menu label ^Install Ubuntu
-  kernel /install/vmlinuz
-  append  file=/cdrom/preseed/ubuntu.seed vga=788 initrd=/install/initrd.gz quiet --
-label check
-  menu label ^Check disc for defects
-  kernel /install/vmlinuz
-  append   MENU=/bin/cdrom-checker-menu vga=788 initrd=/install/initrd.gz quiet --
-label memtest
-  menu label Test ^memory
-  kernel /install/mt86plus
-label hd
-  menu label ^Boot from first hard disk
-  localboot 0x80
-""")
-
-
 def contents_of(fname):
     this_path = os.path.dirname(__file__)
     data_path = os.path.join(this_path, fname)
@@ -66,7 +43,7 @@ def main():
         txt_cfg = mounter.make_file_writable('isolinux/txt.cfg')
 
         with open(txt_cfg, 'wb') as txt:
-            txt.write(ISOLINUX_MENU)
+            txt.write(contents_of('txt.cfg'))
 
         with open(os.path.join(mounter.overlay_dir, 'autoinst.seed'), 'wb') as seed:
             seed.write(contents_of('preseed'))
