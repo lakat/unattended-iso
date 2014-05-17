@@ -1,5 +1,6 @@
 import argparse
 import textwrap
+import os
 
 from uiso import iso
 from uiso import tempdir_maker
@@ -526,14 +527,12 @@ d-i preseed/late_command string \
     in-target bash /root/after_install.sh > /target/root/after_install.log 2>&1
 """)
 
-DEFAULT_AFTER_INSTALL_SCRIPT = textwrap.dedent(r"""
-#!/bin/bash
-cat >> /etc/network/interfaces << EOF
-auto eth0
-iface eth0 inet dhcp
-EOF
-touch /root/after_install.done
-""")
+
+def contents_of(fname):
+    this_path = os.path.dirname(__file__)
+    data_path = os.path.join(this_path, fname)
+    with open(data_path, 'rb') as data_file:
+        return data_file.read()
 
 
 def main():
@@ -574,7 +573,7 @@ def main():
             with open(options.after_install, 'rb') as after_install_file:
                 after_install_script_contents = after_install_file.read()
         else:
-            after_install_script_contents = DEFAULT_AFTER_INSTALL_SCRIPT
+            after_install_script_contents = contents_of('post_install.sh')
 
         with open(os.path.join(mounter.overlay_dir, 'after_install.sh'), 'wb') as after_install:
             after_install.write(after_install_script_contents)

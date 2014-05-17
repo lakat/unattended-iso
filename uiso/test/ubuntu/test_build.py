@@ -24,3 +24,11 @@ class TestGetParamsOrDie(unittest.TestCase):
             ['a', 'b', '--after-install=somefile'])
 
         self.assertEquals('somefile', options.after_install)
+
+
+class TestContentsOf(unittest.TestCase):
+    def test_after_install_script(self):
+        post_install = build.contents_of('post_install.sh')
+
+        self.assertTrue(post_install.startswith('#!/bin/bash'))
+
