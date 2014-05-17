@@ -9,4 +9,3 @@ class TestSetup(unittest.TestCase):
         entry_point, = list(iter_entry_points('console_scripts', 'uiso-build'))
 
         self.assertEquals(build.main, entry_point.load())
-

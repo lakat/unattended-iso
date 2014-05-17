@@ -43,8 +43,8 @@ def missing(fname):
 
 
 def make_mounter(file_checker=exists, binary_checker=exists):
-    executor=mock.Mock()
-    tmpmaker=tempdir_maker.tempdirmaker()
+    executor = mock.Mock()
+    tmpmaker = tempdir_maker.tempdirmaker()
 
     return iso.IsoMounter(
         'isofile', file_checker=file_checker, binary_checker=binary_checker,

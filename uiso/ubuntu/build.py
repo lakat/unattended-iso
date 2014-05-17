@@ -1,5 +1,4 @@
 import argparse
-import textwrap
 import os
 
 from uiso import iso
@@ -45,7 +44,8 @@ def main():
         with open(txt_cfg, 'wb') as txt:
             txt.write(contents_of('txt.cfg'))
 
-        with open(os.path.join(mounter.overlay_dir, 'autoinst.seed'), 'wb') as seed:
+        with open(os.path.join(mounter.overlay_dir,
+                               'autoinst.seed'), 'wb') as seed:
             seed.write(contents_of('autoinst.seed'))
 
         isolinux_cfg = mounter.make_file_writable('isolinux/isolinux.cfg')
@@ -62,7 +62,8 @@ def main():
         else:
             after_install_script_contents = contents_of('post_install.sh')
 
-        with open(os.path.join(mounter.overlay_dir, 'after_install.sh'), 'wb') as after_install:
+        with open(os.path.join(mounter.overlay_dir,
+                               'after_install.sh'), 'wb') as after_install:
             after_install.write(after_install_script_contents)
 
         iso_maker = iso.IsoCreator(

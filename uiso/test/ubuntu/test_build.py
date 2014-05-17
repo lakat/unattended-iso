@@ -31,4 +31,3 @@ class TestContentsOf(unittest.TestCase):
         post_install = build.contents_of('post_install.sh')
 
         self.assertTrue(post_install.startswith('#!/bin/bash'))
-
