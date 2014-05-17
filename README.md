@@ -16,7 +16,6 @@ kvm -enable-kvm -m 4192 -vnc :1 -boot d -net user,hostfwd=tcp::2424-:22 -net nic
 
 ## Developers
 
-### Re-compile Documentation
+### Run Tests
 
-    cd docs
-    sphinx-build -b html ./source ./build
+    tox
