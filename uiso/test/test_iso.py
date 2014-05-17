@@ -42,10 +42,15 @@ def missing(fname):
     return False
 
 
+def make_mounter(file_checker=exists, binary_checker=exists):
+    return iso.IsoMounter(
+        'isofile', file_checker=file_checker, binary_checker=binary_checker)
+
+
+
 class TestIsoMounter(unittest.TestCase):
     def test_validate_file_exists(self):
-        mounter = iso.IsoMounter('isofile', file_checker=exists,
-                                 binary_checker=exists)
+        mounter = make_mounter(file_checker=exists, binary_checker=exists)
 
         self.assertTrue(mounter.validate())
 
