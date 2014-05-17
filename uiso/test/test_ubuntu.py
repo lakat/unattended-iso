@@ -1,7 +1,7 @@
 import unittest
 import mock
 
-from uuiso import ubuntu
+from uiso import ubuntu
 
 
 class TestGetParamsOrDie(unittest.TestCase):

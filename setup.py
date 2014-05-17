@@ -1,10 +1,10 @@
 from setuptools import setup
 
-setup(name='uuiso',
+setup(name='uiso',
       version='0.0.0',
-      packages=['uuiso'],
+      packages=['uiso'],
       entry_points={
           'console_scripts': [
-              'uuiso-build = uuiso.ubuntu:build',
+              'uiso-build = uiso.ubuntu:build',
           ]
       })

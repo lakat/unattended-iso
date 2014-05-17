@@ -1,8 +1,8 @@
 import unittest
 import mock
 
-from uuiso import iso
-from uuiso import tempdir_maker
+from uiso import iso
+from uiso import tempdir_maker
 
 
 class IsoCreator(unittest.TestCase):
