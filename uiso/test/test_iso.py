@@ -55,8 +55,7 @@ class TestIsoMounter(unittest.TestCase):
         self.assertTrue(mounter.validate())
 
     def test_validate_binary_missing(self):
-        mounter = iso.IsoMounter('isofile', file_checker=exists,
-                                 binary_checker=missing)
+        mounter = make_mounter(file_checker=exists, binary_checker=missing)
 
         self.assertFalse(mounter.validate())
 
