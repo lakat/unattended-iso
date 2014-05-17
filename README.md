@@ -5,7 +5,7 @@
 ### Get the original ISO
 wget http://mirror.as29550.net/releases.ubuntu.com/13.10/ubuntu-13.10-server-amd64.iso
 ### Remaster it
-uuiso-build ubuntu-13.10-server-amd64.iso ubuntu-13.10-server-unattended-amd64.iso
+uiso-build ubuntu-13.10-server-amd64.iso ubuntu-13.10-server-unattended-amd64.iso
 ### Create a new virtual hard drive
 qemu-img create hda 4G
 ### Run the installation
