@@ -46,7 +46,7 @@ def main():
             txt.write(contents_of('txt.cfg'))
 
         with open(os.path.join(mounter.overlay_dir, 'autoinst.seed'), 'wb') as seed:
-            seed.write(contents_of('preseed'))
+            seed.write(contents_of('autoinst.seed'))
 
         isolinux_cfg = mounter.make_file_writable('isolinux/isolinux.cfg')
 
