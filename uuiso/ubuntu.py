@@ -536,7 +536,7 @@ touch /root/after_install.done
 """)
 
 
-def main():
+def build():
     import os
     import subprocess
     import tempfile

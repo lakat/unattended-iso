@@ -5,6 +5,6 @@ setup(name='uuiso',
       packages=['uuiso'],
       entry_points={
           'console_scripts': [
-              'uuiso-build = uuiso.build:main',
+              'uuiso-build = uuiso.ubuntu:build',
           ]
       })
