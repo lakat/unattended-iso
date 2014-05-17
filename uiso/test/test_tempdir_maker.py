@@ -1,7 +1,7 @@
 import unittest
 import mock
 
-from uuiso import tempdir_maker
+from uiso import tempdir_maker
 
 
 class TestTmpMaker(unittest.TestCase):

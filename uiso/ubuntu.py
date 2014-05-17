@@ -1,8 +1,8 @@
 import argparse
 import textwrap
 
-from uuiso import iso
-from uuiso import tempdir_maker
+from uiso import iso
+from uiso import tempdir_maker
 
 
 def get_args_or_die(args=None):
