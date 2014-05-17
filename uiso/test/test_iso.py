@@ -45,13 +45,13 @@ def missing(fname):
 class TestIsoMounter(unittest.TestCase):
     def test_validate_file_exists(self):
         mounter = iso.IsoMounter('isofile', file_checker=exists,
-                                   binary_checker=exists)
+                                 binary_checker=exists)
 
         self.assertTrue(mounter.validate())
 
     def test_validate_binary_missing(self):
         mounter = iso.IsoMounter('isofile', file_checker=exists,
-                                   binary_checker=missing)
+                                 binary_checker=missing)
 
         self.assertFalse(mounter.validate())
 
@@ -59,7 +59,7 @@ class TestIsoMounter(unittest.TestCase):
         mock_checker = mock.Mock()
         mock_checker.return_value = True
         mounter = iso.IsoMounter('isofile', file_checker=exists,
-                                   binary_checker=mock_checker)
+                                 binary_checker=mock_checker)
 
         mounter.validate()
 
@@ -76,7 +76,9 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_mount_succeeds(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
+            'isofile',
+            executor=mock.Mock(),
+            tmpmaker=tempdir_maker.tempdirmaker())
 
         mounter.mount()
 
@@ -90,7 +92,9 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_mount_sets_iso_mountpoint(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
+            'isofile',
+            executor=mock.Mock(),
+            tmpmaker=tempdir_maker.tempdirmaker())
 
         mounter.mount()
 
@@ -98,7 +102,9 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_mount_sets_overlay_dir(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
+            'isofile',
+            executor=mock.Mock(),
+            tmpmaker=tempdir_maker.tempdirmaker())
 
         mounter.mount()
 
@@ -106,7 +112,9 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_mount_sets_merged_dir(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
+            'isofile',
+            executor=mock.Mock(),
+            tmpmaker=tempdir_maker.tempdirmaker())
 
         mounter.mount()
 
@@ -114,7 +122,9 @@ class TestIsoMounter(unittest.TestCase):
 
     def test_umount(self):
         mounter = iso.IsoMounter(
-            'isofile', executor=mock.Mock(), tmpmaker=tempdir_maker.tempdirmaker())
+            'isofile',
+            executor=mock.Mock(),
+            tmpmaker=tempdir_maker.tempdirmaker())
         mounter.mount()
         mounter.executor = mock.Mock()
 
@@ -125,6 +135,3 @@ class TestIsoMounter(unittest.TestCase):
                 mock.call(['fusermount', '-u', 'tempdir2']),
                 mock.call(['fusermount', '-u', 'tempdir0']),
             ], mounter.executor.mock_calls)
-
-
-

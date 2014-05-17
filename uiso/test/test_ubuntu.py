@@ -20,8 +20,7 @@ class TestGetParamsOrDie(unittest.TestCase):
         self.assertEquals(None, options.after_install)
 
     def test_after_install_parameter_specified(self):
-        options = ubuntu.get_args_or_die(['a', 'b', '--after-install=somefile'])
+        options = ubuntu.get_args_or_die(
+            ['a', 'b', '--after-install=somefile'])
 
         self.assertEquals('somefile', options.after_install)
-
-

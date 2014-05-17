@@ -80,6 +80,3 @@ class IsoMounter(object):
         shutil.copy(iso_path, overlay_path)
         os.chmod(overlay_path, os.stat(overlay_path).st_mode | stat.S_IWUSR)
         return overlay_path
-
-
-
