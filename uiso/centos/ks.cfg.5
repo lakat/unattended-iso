@@ -23,8 +23,8 @@ firstboot --disable
 
 
 %post
-mount /dev/cdrom /mnt
-cp /mnt/post_install.sh /root/
-bash /root/post_install.sh > /root/post_install.log 2>&1
-umount /mnt
+mount -o ro -t iso9660 /dev/hdc /mnt >> /root/post_install.log 2>&1
+cp /mnt/post_install.sh /root/ >> /root/post_install.log 2>&1
+bash /root/post_install.sh >> /root/post_install.log 2>&1
+umount /mnt >> /root/post_install.log 2>&1
 
