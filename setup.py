@@ -5,6 +5,7 @@ setup(name='uiso',
       packages=['uiso'],
       entry_points={
           'console_scripts': [
-              'uiso-build = uiso.ubuntu.build:main',
+              'uiso-ubuntu = uiso.ubuntu.build:main',
+              'uiso-centos = uiso.centos.build:main',
           ]
       })

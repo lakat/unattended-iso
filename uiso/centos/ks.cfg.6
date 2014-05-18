@@ -1,0 +1,30 @@
+text
+cdrom
+lang en_US.UTF-8
+keyboard us
+network --onboot yes --bootproto dhcp
+rootpw passwd
+firewall --disabled
+authconfig --enableshadow --enablemd5
+selinux --disabled
+timezone UTC
+bootloader --location=mbr --driveorder=sda --append="crashkernel=auto rhgb quiet"
+zerombr yes
+clearpart --all --drives=sda --initlabel
+part /boot --fstype=ext4 --size=100 --ondisk=sda
+part pv.8 --grow --size=1 --ondisk=sda
+volgroup VolGroup --pesize=32768 pv.8
+logvol swap --name=lv_swap --vgname=VolGroup --grow --size=1008 --maxsize=2016
+logvol / --fstype=ext4 --name=lv_root --vgname=VolGroup --grow --size=1024
+poweroff
+firstboot --disable
+
+%packages --nobase
+
+
+%post --nochroot
+cp /mnt/source/post_install.sh /mnt/sysimage/root/
+
+
+%post
+bash /root/post_install.sh > /root/post_install.log 2>&1

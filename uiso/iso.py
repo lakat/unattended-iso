@@ -13,7 +13,7 @@ class IsoCreator(object):
             'mkisofs',
             '-r',
             '-V',
-            'Automated Ubuntu Install CD',
+            'Automated Install CD',
             '-cache-inodes',
             '-J',
             '-l',
@@ -103,6 +103,10 @@ class OverlaidIso(OverlaidIsoData):
     def getcontents(self, path):
         with open(os.path.join(self.merged_dir, path), 'rb') as f:
             return f.read()
+
+    def exists(self, path):
+        merged_path = os.path.join(self.merged_dir, path)
+        return os.path.exists(merged_path)
 
     def write_iso(self, iso_file):
         creator = IsoCreator(self.merged_dir, iso_file, self.executor)
