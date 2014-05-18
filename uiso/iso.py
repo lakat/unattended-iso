@@ -70,21 +70,6 @@ class IsoOverlay(object):
         self.executor(
             ['fusermount', '-u', self.iso_mountpoint])
 
-    def make_file_writable(self, fpath):
-        import os
-        import stat
-        import shutil
-
-        overlay_path = os.path.join(self.overlay_dir, fpath)
-        iso_path = os.path.join(self.iso_mountpoint, fpath)
-
-        overlay_dir = os.path.dirname(overlay_path)
-        if not os.path.exists(overlay_dir):
-            os.makedirs(overlay_dir)
-        shutil.copy(iso_path, overlay_path)
-        os.chmod(overlay_path, os.stat(overlay_path).st_mode | stat.S_IWUSR)
-        return overlay_path
-
     def __enter__(self):
         self.validate()
         return self.mount()
@@ -99,4 +84,17 @@ OverlaidIsoData = collections.namedtuple('OverlaidIsoData', ['mounter'])
 
 
 class OverlaidIso(OverlaidIsoData):
-    pass
+    def make_file_writable(self, fpath):
+        import os
+        import stat
+        import shutil
+
+        overlay_path = os.path.join(self.mounter.overlay_dir, fpath)
+        iso_path = os.path.join(self.mounter.iso_mountpoint, fpath)
+
+        overlay_dir = os.path.dirname(overlay_path)
+        if not os.path.exists(overlay_dir):
+            os.makedirs(overlay_dir)
+        shutil.copy(iso_path, overlay_path)
+        os.chmod(overlay_path, os.stat(overlay_path).st_mode | stat.S_IWUSR)
+        return overlay_path
