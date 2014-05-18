@@ -484,4 +484,3 @@ d-i debian-installer/exit/poweroff boolean true
 d-i preseed/late_command string \
     cp /cdrom/after_install.sh /target/root/; \
     in-target bash /root/after_install.sh > /target/root/after_install.log 2>&1
-

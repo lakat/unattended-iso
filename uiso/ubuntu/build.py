@@ -43,22 +43,14 @@ def main():
                         binary_checker=binary_checker) as overlaid_iso:
 
         overlaid_iso.make_file_writable('isolinux/isolinux.bin')
-        txt_cfg = overlaid_iso.make_file_writable('isolinux/txt.cfg')
+        overlaid_iso.setcontents('isolinux/txt.cfg', contents_of('txt.cfg'))
+        overlaid_iso.setcontents('autoinst.seed', contents_of('autoinst.seed'))
 
-        with open(txt_cfg, 'wb') as txt:
-            txt.write(contents_of('txt.cfg'))
+        bootconfig = overlaid_iso.getcontents(
+            'isolinux/isolinux.cfg')
 
-        with open(os.path.join(overlaid_iso.mounter.overlay_dir,
-                               'autoinst.seed'), 'wb') as seed:
-            seed.write(contents_of('autoinst.seed'))
-
-        isolinux_cfg = overlaid_iso.make_file_writable('isolinux/isolinux.cfg')
-
-        with open(isolinux_cfg, 'rb') as bootcfg:
-            bootconfig = bootcfg.read()
-
-        with open(isolinux_cfg, 'wb') as bootcfg:
-            bootcfg.write(bootconfig.replace("timeout 0", "timeout 1"))
+        overlaid_iso.setcontents('isolinux/isolinux.cfg',
+                                 bootconfig.replace("timeout 0", "timeout 1"))
 
         if options.after_install:
             with open(options.after_install, 'rb') as after_install_file:
@@ -66,9 +58,8 @@ def main():
         else:
             after_install_script_contents = contents_of('post_install.sh')
 
-        with open(os.path.join(overlaid_iso.mounter.overlay_dir,
-                               'after_install.sh'), 'wb') as after_install:
-            after_install.write(after_install_script_contents)
+        overlaid_iso.setcontents(
+            'after_install.sh', after_install_script_contents)
 
         iso_maker = iso.IsoCreator(
             overlaid_iso.mounter.merged_dir,
