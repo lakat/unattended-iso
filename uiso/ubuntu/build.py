@@ -1,9 +1,7 @@
 import argparse
 import os
-import subprocess
 
 from uiso import builder
-from uiso import iso
 
 
 def get_args_or_die(args=None):
@@ -47,9 +45,4 @@ def main():
         overlaid_iso.setcontents(
             'after_install.sh', after_install_script_contents)
 
-        iso_maker = iso.IsoCreator(
-            overlaid_iso.mounter.merged_dir,
-            options.automated,
-            executor=subprocess.call)
-
-        iso_maker.create()
+        overlaid_iso.write_iso(options.automated)

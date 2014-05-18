@@ -86,7 +86,7 @@ class TestIsoOverlay(unittest.TestCase):
         result = mounter.mount()
 
         self.assertEquals(iso.OverlaidIso(
-            mounter.overlay_dir, mounter.merged_dir), result)
+            mounter.overlay_dir, mounter.merged_dir, mounter.executor), result)
 
     def test_mount_succeeds(self):
         mounter = make_mounter()
@@ -189,3 +189,15 @@ class TestIsoOverlay(unittest.TestCase):
         mounter.__exit__(None, None, None)
 
         mounter.tmpmaker.remove_all.assert_called_once_with()
+
+
+class TestOverlaidIso(unittest.TestCase):
+    @mock.patch('uiso.iso.IsoCreator')
+    def test_make_iso(self, iso_creator):
+        overlaid = iso.OverlaidIso(
+            overlay_dir=None, merged_dir='merged', executor='executor')
+        creator = iso_creator.return_value = mock.Mock()
+
+        overlaid.write_iso('isofile')
+
+        creator.create.assert_called_once_with()
