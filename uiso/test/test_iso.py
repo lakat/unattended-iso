@@ -80,6 +80,13 @@ class TestIsoOverlay(unittest.TestCase):
 
         self.assertFalse(mounter.validate())
 
+    def test_mount_return_value(self):
+        mounter = make_mounter()
+
+        result = mounter.mount()
+
+        self.assertEquals(iso.OverlaidIso(mounter), result)
+
     def test_mount_succeeds(self):
         mounter = make_mounter()
 
@@ -126,3 +133,58 @@ class TestIsoOverlay(unittest.TestCase):
                 mock.call(['fusermount', '-u', 'tempdir2']),
                 mock.call(['fusermount', '-u', 'tempdir0']),
             ], mounter.executor.mock_calls)
+
+    def test___enter___returns_mount_result(self):
+        mounter = make_mounter()
+        mounter.validate = mock.Mock()
+        mounter.mount = mock.Mock()
+        mounter.mount.return_value = 'mount result'
+
+        context = mounter.__enter__()
+
+        self.assertEquals('mount result', context)
+
+    def test___enter___calls_valdate(self):
+        mounter = make_mounter()
+        mounter.validate = mock.Mock()
+        mounter.mount = mock.Mock()
+
+        mounter.__enter__()
+
+        mounter.validate.assert_called_once_with()
+
+    def test___enter___calls_mount(self):
+        mounter = make_mounter()
+        mounter.validate = mock.Mock()
+        mounter.mount = mock.Mock()
+
+        mounter.__enter__()
+
+        mounter.mount.assert_called_once_with()
+
+    def test___exit___returns_false_propagating_exception(self):
+        mounter = make_mounter()
+        mounter.umount = mock.Mock()
+        mounter.tmpmaker = mock.Mock(spec=tempdir_maker.TmpMaker)
+
+        result = mounter.__exit__(None, None, None)
+
+        self.assertFalse(result)
+
+    def test___exit___calls_umount(self):
+        mounter = make_mounter()
+        mounter.umount = mock.Mock()
+        mounter.tmpmaker = mock.Mock(spec=tempdir_maker.TmpMaker)
+
+        mounter.__exit__(None, None, None)
+
+        mounter.umount.assert_called_once_with()
+
+    def test___exit___cleans_up_tempdirs(self):
+        mounter = make_mounter()
+        mounter.umount = mock.Mock()
+        mounter.tmpmaker = mock.Mock(spec=tempdir_maker.TmpMaker)
+
+        mounter.__exit__(None, None, None)
+
+        mounter.tmpmaker.remove_all.assert_called_once_with()

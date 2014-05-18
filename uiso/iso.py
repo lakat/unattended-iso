@@ -1,3 +1,6 @@
+import collections
+
+
 class IsoCreator(object):
     def __init__(self, source_dir, target_file, executor=None):
         self.source_dir = source_dir
@@ -59,6 +62,7 @@ class IsoOverlay(object):
                 self.merged_dir
             ]
         )
+        return OverlaidIso(self)
 
     def umount(self):
         self.executor(
@@ -80,3 +84,19 @@ class IsoOverlay(object):
         shutil.copy(iso_path, overlay_path)
         os.chmod(overlay_path, os.stat(overlay_path).st_mode | stat.S_IWUSR)
         return overlay_path
+
+    def __enter__(self):
+        self.validate()
+        return self.mount()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.umount()
+        self.tmpmaker.remove_all()
+        return False
+
+
+OverlaidIsoData = collections.namedtuple('OverlaidIsoData', ['mounter'])
+
+
+class OverlaidIso(OverlaidIsoData):
+    pass
