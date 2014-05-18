@@ -63,7 +63,9 @@ class IsoOverlay(object):
                 self.merged_dir
             ]
         )
-        return OverlaidIso(self)
+        return OverlaidIso(
+            overlay_dir=self.overlay_dir,
+            merged_dir=self.merged_dir)
 
     def umount(self):
         self.executor(
@@ -81,12 +83,13 @@ class IsoOverlay(object):
         return False
 
 
-OverlaidIsoData = collections.namedtuple('OverlaidIsoData', ['mounter'])
+OverlaidIsoData = collections.namedtuple('OverlaidIsoData',
+                                         ['overlay_dir', 'merged_dir'])
 
 
 class OverlaidIso(OverlaidIsoData):
     def setcontents(self, path, contents):
-        overlay_path = os.path.join(self.mounter.overlay_dir, path)
+        overlay_path = os.path.join(self.overlay_dir, path)
         overlay_dir = os.path.dirname(overlay_path)
         if not os.path.exists(overlay_dir):
             os.makedirs(overlay_dir)
@@ -95,5 +98,5 @@ class OverlaidIso(OverlaidIsoData):
             f.write(contents)
 
     def getcontents(self, path):
-        with open(os.path.join(self.mounter.merged_dir, path), 'rb') as f:
+        with open(os.path.join(self.merged_dir, path), 'rb') as f:
             return f.read()

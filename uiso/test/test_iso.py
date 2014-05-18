@@ -85,7 +85,8 @@ class TestIsoOverlay(unittest.TestCase):
 
         result = mounter.mount()
 
-        self.assertEquals(iso.OverlaidIso(mounter), result)
+        self.assertEquals(iso.OverlaidIso(
+            mounter.overlay_dir, mounter.merged_dir), result)
 
     def test_mount_succeeds(self):
         mounter = make_mounter()
