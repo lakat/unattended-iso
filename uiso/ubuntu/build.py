@@ -34,6 +34,12 @@ def main():
 
     options = get_args_or_die()
 
+    if options.after_install:
+        with open(options.after_install, 'rb') as after_install_file:
+            after_install_script_contents = after_install_file.read()
+    else:
+        after_install_script_contents = contents_of('post_install.sh')
+
     tmp_maker = tempdir_maker.TmpMaker(tempfile.mkdtemp, shutil.rmtree)
 
     with iso.IsoOverlay(options.official,
@@ -52,12 +58,6 @@ def main():
 
         overlaid_iso.setcontents('isolinux/isolinux.cfg',
                                  bootconfig.replace("timeout 0", "timeout 1"))
-
-        if options.after_install:
-            with open(options.after_install, 'rb') as after_install_file:
-                after_install_script_contents = after_install_file.read()
-        else:
-            after_install_script_contents = contents_of('post_install.sh')
 
         overlaid_iso.setcontents(
             'after_install.sh', after_install_script_contents)
