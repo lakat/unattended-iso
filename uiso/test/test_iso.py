@@ -42,8 +42,8 @@ def missing(fname):
     return False
 
 
-def make_mounter(file_checker=exists, binary_checker=exists, umount=None,
-                 tmpmaker=None):
+def make_mounter(file_checker=exists, binary_checker=exists, tmpmaker=None,
+                 **monkey_patches):
     executor = mock.Mock()
     tmpmaker = tmpmaker or tempdir_maker.tempdirmaker()
 
@@ -51,8 +51,8 @@ def make_mounter(file_checker=exists, binary_checker=exists, umount=None,
         'isofile', file_checker=file_checker, binary_checker=binary_checker,
         executor=executor, tmpmaker=tmpmaker)
 
-    if umount:
-        mounter.umount = umount
+    for k, v in monkey_patches.items():
+        setattr(mounter, k, v)
 
     return mounter
 
@@ -151,19 +151,15 @@ class TestIsoOverlay(unittest.TestCase):
 
         self.assertEquals('mount result', context)
 
-    def test___enter___calls_valdate(self):
-        mounter = make_mounter()
-        mounter.validate = mock.Mock()
-        mounter.mount = mock.Mock()
+    def test___enter___calls_validate(self):
+        mounter = make_mounter(validate=mock.Mock(), mount=mock.Mock())
 
         mounter.__enter__()
 
         mounter.validate.assert_called_once_with()
 
     def test___enter___calls_mount(self):
-        mounter = make_mounter()
-        mounter.validate = mock.Mock()
-        mounter.mount = mock.Mock()
+        mounter = make_mounter(validate=mock.Mock(), mount=mock.Mock())
 
         mounter.__enter__()
 
