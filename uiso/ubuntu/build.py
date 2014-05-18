@@ -48,8 +48,7 @@ def main():
         overlaid_iso.setcontents('isolinux/txt.cfg', contents_of('txt.cfg'))
         overlaid_iso.setcontents('autoinst.seed', contents_of('autoinst.seed'))
 
-        bootconfig = overlaid_iso.getcontents(
-            'isolinux/isolinux.cfg')
+        bootconfig = overlaid_iso.getcontents('isolinux/isolinux.cfg')
 
         overlaid_iso.setcontents('isolinux/isolinux.cfg',
                                  bootconfig.replace("timeout 0", "timeout 1"))
