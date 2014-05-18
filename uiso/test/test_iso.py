@@ -42,13 +42,19 @@ def missing(fname):
     return False
 
 
-def make_mounter(file_checker=exists, binary_checker=exists):
+def make_mounter(file_checker=exists, binary_checker=exists, umount=None,
+                 tmpmaker=None):
     executor = mock.Mock()
-    tmpmaker = tempdir_maker.tempdirmaker()
+    tmpmaker = tmpmaker or tempdir_maker.tempdirmaker()
 
-    return iso.IsoOverlay(
+    mounter = iso.IsoOverlay(
         'isofile', file_checker=file_checker, binary_checker=binary_checker,
         executor=executor, tmpmaker=tmpmaker)
+
+    if umount:
+        mounter.umount = umount
+
+    return mounter
 
 
 class TestIsoOverlay(unittest.TestCase):
@@ -164,27 +170,27 @@ class TestIsoOverlay(unittest.TestCase):
         mounter.mount.assert_called_once_with()
 
     def test___exit___returns_false_propagating_exception(self):
-        mounter = make_mounter()
-        mounter.umount = mock.Mock()
-        mounter.tmpmaker = mock.Mock(spec=tempdir_maker.TmpMaker)
+        mounter = make_mounter(
+            umount=mock.Mock(),
+            tmpmaker=mock.Mock(spec=tempdir_maker.TmpMaker))
 
         result = mounter.__exit__(None, None, None)
 
         self.assertFalse(result)
 
     def test___exit___calls_umount(self):
-        mounter = make_mounter()
-        mounter.umount = mock.Mock()
-        mounter.tmpmaker = mock.Mock(spec=tempdir_maker.TmpMaker)
+        mounter = make_mounter(
+            umount=mock.Mock(),
+            tmpmaker=mock.Mock(spec=tempdir_maker.TmpMaker))
 
         mounter.__exit__(None, None, None)
 
         mounter.umount.assert_called_once_with()
 
     def test___exit___cleans_up_tempdirs(self):
-        mounter = make_mounter()
-        mounter.umount = mock.Mock()
-        mounter.tmpmaker = mock.Mock(spec=tempdir_maker.TmpMaker)
+        mounter = make_mounter(
+            umount=mock.Mock(),
+            tmpmaker=mock.Mock(spec=tempdir_maker.TmpMaker))
 
         mounter.__exit__(None, None, None)
 
