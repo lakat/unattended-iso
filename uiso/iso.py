@@ -24,7 +24,7 @@ class IsoCreator(object):
             ])
 
 
-class IsoMounter(object):
+class IsoOverlay(object):
     def __init__(self, path, file_checker=None, executor=None, tmpmaker=None,
                  binary_checker=None):
         self.path = path

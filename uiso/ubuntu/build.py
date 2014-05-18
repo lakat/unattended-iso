@@ -35,29 +35,29 @@ def main():
 
     tmp_maker = tempdir_maker.TmpMaker(tempfile.mkdtemp)
 
-    mounter = iso.IsoMounter(
+    overlay = iso.IsoOverlay(
         options.official,
         file_checker=os.path.exists,
         executor=subprocess.call,
         tmpmaker=tmp_maker,
         binary_checker=binary_checker)
 
-    mounter.validate()
+    overlay.validate()
 
-    mounter.mount()
+    overlay.mount()
 
     try:
-        mounter.make_file_writable('isolinux/isolinux.bin')
-        txt_cfg = mounter.make_file_writable('isolinux/txt.cfg')
+        overlay.make_file_writable('isolinux/isolinux.bin')
+        txt_cfg = overlay.make_file_writable('isolinux/txt.cfg')
 
         with open(txt_cfg, 'wb') as txt:
             txt.write(contents_of('txt.cfg'))
 
-        with open(os.path.join(mounter.overlay_dir,
+        with open(os.path.join(overlay.overlay_dir,
                                'autoinst.seed'), 'wb') as seed:
             seed.write(contents_of('autoinst.seed'))
 
-        isolinux_cfg = mounter.make_file_writable('isolinux/isolinux.cfg')
+        isolinux_cfg = overlay.make_file_writable('isolinux/isolinux.cfg')
 
         with open(isolinux_cfg, 'rb') as bootcfg:
             bootconfig = bootcfg.read()
@@ -71,13 +71,13 @@ def main():
         else:
             after_install_script_contents = contents_of('post_install.sh')
 
-        with open(os.path.join(mounter.overlay_dir,
+        with open(os.path.join(overlay.overlay_dir,
                                'after_install.sh'), 'wb') as after_install:
             after_install.write(after_install_script_contents)
 
         iso_maker = iso.IsoCreator(
-            mounter.merged_dir, options.automated, executor=subprocess.call)
+            overlay.merged_dir, options.automated, executor=subprocess.call)
 
         iso_maker.create()
     finally:
-        mounter.umount()
+        overlay.umount()

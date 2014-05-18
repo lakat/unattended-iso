@@ -46,12 +46,12 @@ def make_mounter(file_checker=exists, binary_checker=exists):
     executor = mock.Mock()
     tmpmaker = tempdir_maker.tempdirmaker()
 
-    return iso.IsoMounter(
+    return iso.IsoOverlay(
         'isofile', file_checker=file_checker, binary_checker=binary_checker,
         executor=executor, tmpmaker=tmpmaker)
 
 
-class TestIsoMounter(unittest.TestCase):
+class TestIsoOverlay(unittest.TestCase):
     def test_validate_file_exists(self):
         mounter = make_mounter(binary_checker=exists)
 
