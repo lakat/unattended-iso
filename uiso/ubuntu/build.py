@@ -42,7 +42,9 @@ def main():
                         tmpmaker=tmp_maker,
                         binary_checker=binary_checker) as overlaid_iso:
 
-        overlaid_iso.make_file_writable('isolinux/isolinux.bin')
+        overlaid_iso.setcontents(
+            'isolinux/isolinux.bin',
+            overlaid_iso.getcontents('isolinux/isolinux.bin'))
         overlaid_iso.setcontents('isolinux/txt.cfg', contents_of('txt.cfg'))
         overlaid_iso.setcontents('autoinst.seed', contents_of('autoinst.seed'))
 

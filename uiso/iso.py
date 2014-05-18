@@ -85,32 +85,13 @@ OverlaidIsoData = collections.namedtuple('OverlaidIsoData', ['mounter'])
 
 
 class OverlaidIso(OverlaidIsoData):
-    def make_file_writable(self, fpath):
-        import os
-        import stat
-
-        overlay_path = os.path.join(self.mounter.overlay_dir, fpath)
-        merged_path = os.path.join(self.mounter.merged_dir, fpath)
-
+    def setcontents(self, path, contents):
+        overlay_path = os.path.join(self.mounter.overlay_dir, path)
         overlay_dir = os.path.dirname(overlay_path)
         if not os.path.exists(overlay_dir):
             os.makedirs(overlay_dir)
 
-        if os.path.exists(merged_path):
-            with open(merged_path, 'rb') as f:
-                contents = f.read()
-        else:
-            contents = ''
-
         with open(overlay_path, 'wb') as f:
-            f.write(contents)
-
-        os.chmod(overlay_path, os.stat(overlay_path).st_mode | stat.S_IWUSR)
-
-    def setcontents(self, path, contents):
-        self.make_file_writable(path)
-        merged_path = os.path.join(self.mounter.merged_dir, path)
-        with open(merged_path, 'wb') as f:
             f.write(contents)
 
     def getcontents(self, path):
