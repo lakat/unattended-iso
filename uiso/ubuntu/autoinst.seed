@@ -484,5 +484,5 @@ d-i preseed/early_command string umount /media || true
 # packages and run commands in the target system.
 #d-i preseed/late_command string apt-install zsh; in-target chsh -s /bin/zsh
 d-i preseed/late_command string \
-    cp /cdrom/after_install.sh /target/root/; \
-    in-target bash /root/after_install.sh > /target/root/after_install.log 2>&1
+    cp /cdrom/post_install.sh /target/root/; \
+    in-target bash /root/post_install.sh > /target/root/post_install.log 2>&1

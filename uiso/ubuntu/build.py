@@ -6,9 +6,9 @@ from uiso import builder
 
 def get_args_or_die(args=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('official')
-    parser.add_argument('automated')
-    parser.add_argument('--after-install')
+    parser.add_argument('base_iso')
+    parser.add_argument('remastered_iso')
+    parser.add_argument('--post-install-script')
 
     return parser.parse_args(args=args)
 
@@ -23,13 +23,13 @@ def contents_of(fname):
 def main():
     options = get_args_or_die()
 
-    if options.after_install:
-        with open(options.after_install, 'rb') as after_install_file:
-            after_install_script_contents = after_install_file.read()
+    if options.post_install_script:
+        with open(options.post_install_script, 'rb') as script_file:
+            post_install_contents = script_file.read()
     else:
-        after_install_script_contents = contents_of('post_install.sh')
+        post_install_contents = contents_of('post_install.sh')
 
-    with builder.overlaid(options.official) as overlaid_iso:
+    with builder.overlaid(options.base_iso) as overlaid_iso:
 
         overlaid_iso.setcontents(
             'isolinux/isolinux.bin',
@@ -43,6 +43,6 @@ def main():
                                  bootconfig.replace("timeout 0", "timeout 1"))
 
         overlaid_iso.setcontents(
-            'after_install.sh', after_install_script_contents)
+            'post_install.sh', post_install_contents)
 
-        overlaid_iso.write_iso(options.automated)
+        overlaid_iso.write_iso(options.remastered_iso)
