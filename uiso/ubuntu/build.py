@@ -1,8 +1,9 @@
 import argparse
 import os
+import subprocess
 
+from uiso import builder
 from uiso import iso
-from uiso import tempdir_maker
 
 
 def get_args_or_die(args=None):
@@ -21,17 +22,7 @@ def contents_of(fname):
         return data_file.read()
 
 
-def binary_checker(fname):
-    import distutils
-    return bool(distutils.spawn.find_executable(fname))
-
-
 def main():
-    import os
-    import subprocess
-    import tempfile
-    import shutil
-
     options = get_args_or_die()
 
     if options.after_install:
@@ -40,13 +31,7 @@ def main():
     else:
         after_install_script_contents = contents_of('post_install.sh')
 
-    tmp_maker = tempdir_maker.TmpMaker(tempfile.mkdtemp, shutil.rmtree)
-
-    with iso.IsoOverlay(options.official,
-                        file_checker=os.path.exists,
-                        executor=subprocess.call,
-                        tmpmaker=tmp_maker,
-                        binary_checker=binary_checker) as overlaid_iso:
+    with builder.overlaid(options.official) as overlaid_iso:
 
         overlaid_iso.setcontents(
             'isolinux/isolinux.bin',
