@@ -11,11 +11,7 @@ timezone UTC
 bootloader --location=mbr --driveorder=hda --append="crashkernel=auto rhgb quiet"
 zerombr yes
 clearpart --all --drives=hda --initlabel
-part /boot --fstype=ext3 --size=100 --ondisk=hda
-part pv.8 --grow --size=1 --ondisk=hda
-volgroup VolGroup --pesize=32768 pv.8
-logvol swap --name=lv_swap --vgname=VolGroup --grow --size=1008 --maxsize=2016
-logvol / --fstype=ext3 --name=lv_root --vgname=VolGroup --grow --size=1024
+part / --fstype=ext3 --size=1000 --grow --ondisk=hda
 poweroff
 firstboot --disable
 
