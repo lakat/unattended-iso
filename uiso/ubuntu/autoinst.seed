@@ -332,6 +332,7 @@ d-i apt-setup/use_mirror boolean false
 #tasksel tasksel/first multiselect kubuntu-desktop
 # NOTE: only openssh-server
 tasksel tasksel/first multiselect openssh-server
+tasksel tasksel/skip-tasks      string standard
 
 # Individual additional packages to install
 #d-i pkgsel/include string openssh-server build-essential
