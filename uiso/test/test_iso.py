@@ -18,7 +18,7 @@ class IsoCreator(unittest.TestCase):
                 'mkisofs',
                 '-r',
                 '-V',
-                'Automated Ubuntu Install CD',
+                'Automated Install CD',
                 '-cache-inodes',
                 '-J',
                 '-l',
