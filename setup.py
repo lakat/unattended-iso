@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 setup(name='uiso',
-      version='0.2.0-dev',
+      version='0.2.0',
       packages=find_packages(),
       package_data = {
           'uiso': [
